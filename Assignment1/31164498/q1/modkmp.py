@@ -179,5 +179,3 @@ if __name__=="__main__":
 
     # print(kmp_mod("cccd","ffbfccccdeabfc"))
     # print(kmp_mod("eeeef","edceeeeef"))
-
-

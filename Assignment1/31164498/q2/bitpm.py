@@ -38,7 +38,6 @@ def bitvectors(pattern,text,delta):
     vector=2**m-1
     if pattern[0]==text[0]: #bitvector of 0
         vector=vector^(1<<0)
-        print(vector)
     vectors.append(vector)
 
     for i in range(1,len(text)):
@@ -53,11 +52,10 @@ def bitpm(pattern,text):
     bitvector_list=bitvectors(pattern,text,d_array)
     result=[]
     m=len(pattern)
-    print(bitvector_list)
-    for i in range(len(text)):
+    for i in range(len(pattern)-1,len(text)):
         bitvector=bitvector_list[i]
         if bitvector<=((2**m)/2)-1: #if less than half, means ==zero
-            result.append(i)
+            result.append(i-m+1)
     return result
 
 
@@ -70,4 +68,3 @@ if __name__=="__main__":
 
     # write_tofile(occurences)
     pass
-    # print("".join([1,0,1]))
