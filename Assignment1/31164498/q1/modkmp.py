@@ -104,7 +104,7 @@ def spix(pattern,zarray):
     matrix=[[0 for i in range(m)] for j in range(256)]
     for j in range(m-1,0,-1):
         i=j+zarray[j]-1
-        x=zarray[j]+1
+        x=zarray[j]+1 #mismatch position
         if x<m:
             matrix[ord(pattern[x])][i]=zarray[j]
     return matrix
@@ -166,14 +166,16 @@ def kmp_mod(pattern,text):
 
 if __name__=="__main__":
 
-    txt_file=sys.argv[1]
-    pat_file=sys.argv[2]
-    text,pattern=read_file(txt_file,pat_file)
-    occurences=kmp_mod(pattern,text)
-
-    write_tofile(occurences)
+    # txt_file=sys.argv[1]
+    # pat_file=sys.argv[2]
+    # text,pattern=read_file(txt_file,pat_file)
+    # occurences=kmp_mod(pattern,text)
+    pass
+    # write_tofile(occurences)
     # print(kmp_mod("abba","bbaababaababbababbaabba"))
     # print(kmp_mod("ooo","oolloloolloolooolooooool"))
+    print(kmp_mod("moo","oommmoomomommomoommoo"))
+    print(zalgo("dadax"))
 
 
-
+print(ord(" "))
