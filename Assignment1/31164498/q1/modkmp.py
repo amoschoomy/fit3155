@@ -121,7 +121,6 @@ def kmp_mod(pattern,text):
     zarray=zalgo(pattern)
     sp=shared_prefix(pattern,zarray)#preprocess
     spix_array=spix(pattern,zarray)
-
     i=0
     n=len(text)
     m=len(pattern)
@@ -139,28 +138,29 @@ def kmp_mod(pattern,text):
 
             elif j<resume: #galil optimsiation, skip comparison till resume
                 j=resume
-                print("activated galil")
+                # print("activated galil")
             j+=1
 
 
         if not mismatch: #if full match happens
             matches.append(i)
             shift=m-sp[m-1] #shift according to the formula
-            print(shift,"full pattern shift")
+            # print(shift,"full pattern shift")
 
 
         else: #mismatch happens
             if j==0: #at first position, move by one
                 shift=1
+                # print("shiftbyone",shift)
             else:
                 # shift=j-sp[j] # replace with spix
-                shift=j-spix_array[ord(text[i+j])][j]
+                shift=j-spix_array[ord(text[i+j])][j-1]-1
                 if shift>1: 
-                    resume=spix_array[ord(text[i+j])][j] #move resume
-                print("modshift",shift)
+                    resume=spix_array[ord(text[i+j])][j-1]-1 #move resume
+                # print("modshift",shift)
             # print(shift,"mismatch shift")
         i+=max(shift,1)
-        print("new i",i)
+        # print("new i",i)
     return matches
 
 
@@ -174,8 +174,10 @@ if __name__=="__main__":
     # write_tofile(occurences)
     # print(kmp_mod("abba","bbaababaababbababbaabba"))
     # print(kmp_mod("ooo","oolloloolloolooolooooool"))
-    print(kmp_mod("moo","oommmoomomommomoommoo"))
-    print(zalgo("dadax"))
+    # print(kmp_mod("moo","oommmoomomommomoommoo"))
+    # print(zalgo("dadax"))
+
+    # print(kmp_mod("cccd","ffbfccccdeabfc"))
+    # print(kmp_mod("eeeef","edceeeeef"))
 
 
-print(ord(" "))
