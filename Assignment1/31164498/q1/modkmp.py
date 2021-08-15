@@ -1,6 +1,13 @@
 import sys
 from typing import List
 
+"""
+Name: Amos Choo Jia Shern
+ID: 31164498
+
+"""
+
+
 def read_file(txt_file,pat_file):
     """
     Read file
