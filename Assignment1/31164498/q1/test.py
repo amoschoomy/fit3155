@@ -1,6 +1,6 @@
 import random
 import string
-from modkmp import kmp_mod
+from modkmp import kmp_mod,kmp
 def naive_test(string, pat):
     out = []
     for i in range(len(string)-len(pat)+1):
@@ -14,7 +14,6 @@ def test_algo(algo_name, times, max_str_len, charset):
     for i in range(times):
         str_len = random.randint(1,max_str_len)
         pat_len = random.randint(1,5)
-        
         str1 = "".join(random.sample(modified_cs, str_len))
         pat1 = "".join(random.sample(modified_cs, pat_len))
         naive_sol = naive_test(str1, pat1)

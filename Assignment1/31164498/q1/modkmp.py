@@ -20,10 +20,14 @@ def write_tofile(occurences:List[int]):
         if not occurences:
             f.close()
             return
+
+        #This line of code is referenced from 
+        # https://monash.au.panopto.com/Panopto/Pages/Viewer.aspx?id=c11e7654-565b-415b-a7d9-ad7f0090bc75&start=0    
         f.write(str(occurences[0]+1))
         for i in range(1,len(occurences)):
             f.write("\n")
             f.write(str(occurences[i]+1))
+
 
 def zalgo(word:str):
     """
@@ -55,7 +59,7 @@ def zalgo(word:str):
             if zarray[k]<remaining:
                 zarray[i]=zarray[k] #use the previous zbox value
 
-            #Case 2b
+            #Case 2b: previous zbox exceeds remaining
             elif zarray[k]>remaining:
                 zarray[i]=remaining
 
@@ -84,7 +88,7 @@ def explicit_comparison(pattern,start1,start2):
 def shared_prefix(pattern,zarray):
     """
     Shared prefix array
-    Algorithm from Lecture notes
+    Algorithm referenced from Lecture notes
 
     """
     m=len(pattern)
@@ -96,17 +100,21 @@ def shared_prefix(pattern,zarray):
 
 def spix(pattern,zarray):
     """
-    spix matrix
+    spi(x) matrix
+
+    Same thing as SPi array but fill up mismatches according to the mismatch
+    character index
     
     """
 
     m=len(pattern)
-    matrix=[[0 for i in range(m)] for j in range(256)]
+    matrix=[[0 for i in range(m)] for j in range(126-32)] #126-32 == printable ascii characters
+
     for j in range(m-1,0,-1):
         i=j+zarray[j]-1
         x=zarray[j]+1 #mismatch position
         if x<m:
-            matrix[ord(pattern[x])][i]=zarray[j]
+            matrix[ord(pattern[x])-32][i]=zarray[j]
     return matrix
 
     
@@ -118,14 +126,20 @@ def kmp_mod(pattern,text):
     Modded kmp to use SPi(x) when a mismatch occurs
     Time complexity: O(m+n)
     """
+
+    #Preprocess
     zarray=zalgo(pattern)
-    sp=shared_prefix(pattern,zarray)#preprocess
+    sp=shared_prefix(pattern,zarray)
     spix_array=spix(pattern,zarray)
+
+
     i=0
     n=len(text)
     m=len(pattern)
     matches=[]
-    resume=0
+    resume=0 #galil variable
+
+
     while i+m<=n:
         j=0
         mismatch=False
@@ -134,48 +148,30 @@ def kmp_mod(pattern,text):
             if pattern[j]!=text[i+j]: #explicit comparison from position i+j and i
                 mismatch=True
                 break
-
-
             elif j<resume: #galil optimsiation, skip comparison till resume
                 j=resume
-                # print("activated galil")
             j+=1
 
 
         if not mismatch: #if full match happens
             matches.append(i)
             shift=m-sp[m-1] #shift according to the formula
-            # print(shift,"full pattern shift")
 
 
         else: #mismatch happens
             if j==0: #at first position, move by one
                 shift=1
-                # print("shiftbyone",shift)
             else:
-                # shift=j-sp[j] # replace with spix
-                shift=j-spix_array[ord(text[i+j])][j-1]-1
-                if shift>1: 
-                    resume=spix_array[ord(text[i+j])][j-1]-1 #move resume
-                # print("modshift",shift)
-            # print(shift,"mismatch shift")
-        i+=max(shift,1)
-        # print("new i",i)
+                shift=max(1,j-spix_array[ord(text[i+j])-32][j-1]-1) #use reference from spix array at mismatch pos
+                resume=spix_array[ord(text[i+j])-32][j-1]-1 #move resume
+        i+=shift
     return matches
 
 
 if __name__=="__main__":
 
-    # txt_file=sys.argv[1]
-    # pat_file=sys.argv[2]
-    # text,pattern=read_file(txt_file,pat_file)
-    # occurences=kmp_mod(pattern,text)
-    pass
-    # write_tofile(occurences)
-    # print(kmp_mod("abba","bbaababaababbababbaabba"))
-    # print(kmp_mod("ooo","oolloloolloolooolooooool"))
-    # print(kmp_mod("moo","oommmoomomommomoommoo"))
-    # print(zalgo("dadax"))
-
-    # print(kmp_mod("cccd","ffbfccccdeabfc"))
-    # print(kmp_mod("eeeef","edceeeeef"))
+    txt_file=sys.argv[1]
+    pat_file=sys.argv[2]
+    text,pattern=read_file(txt_file,pat_file)
+    occurences=kmp_mod(pattern,text)
+    write_tofile(occurences)
