@@ -70,7 +70,7 @@ def bitvectors(pattern,text,delta):
     m=len(pattern)
     vector=2**m-1 # we can make an observation for bitvector 0, it will have no pattern prefix aligned
     # with the text, except for the LSB of the vector
-    # So in binary it will be 11111....1111
+    # So in binary it will be 11111....1111 initallly
 
 
     #So this is why we check first char of pattern and text
@@ -124,4 +124,4 @@ if __name__=="__main__":
     occurences=bitpm(pattern,text)
 
     write_tofile(occurences)
-    pass
+    
