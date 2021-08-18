@@ -119,13 +119,11 @@ def spix(pattern,zarray):
 
     for j in range(m-1,0,-1):
         i=j+zarray[j]-1
-        x=zarray[j]+1 #mismatch position
-        if x<m:
-            matrix[ord(pattern[x])-32][i]=zarray[j]
+        x=zarray[j] #mismatch position at pattern from prefix
+        matrix[ord(pattern[x])-32][i]=zarray[j]
     return matrix
 
     
-
 
 def kmp_mod(pattern,text):
     """
@@ -156,7 +154,7 @@ def kmp_mod(pattern,text):
                 mismatch=True
                 break
             elif j<resume: #galil optimsiation, skip comparison till resume
-                j=resume
+                j=resume-1
             j+=1
 
 
@@ -169,8 +167,8 @@ def kmp_mod(pattern,text):
             if j==0: #at first position, move by one
                 shift=1
             else:
-                shift=max(1,j-spix_array[ord(text[i+j])-32][j-1]-1) #use reference from spix array at mismatch pos
-                resume=spix_array[ord(text[i+j])-32][j-1]-1 #move resume
+                shift=j-spix_array[ord(text[i+j])-32][j-1] #use reference from spix array at mismatch pos
+                resume=spix_array[ord(text[i+j])-32][j-1] #move resume
         i+=shift
     return matches
 
@@ -182,3 +180,6 @@ if __name__=="__main__":
     text,pattern=read_file(txt_file,pat_file)
     occurences=kmp_mod(pattern,text)
     write_tofile(occurences)
+
+    pass
+

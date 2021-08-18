@@ -1,6 +1,6 @@
 import random
 import string
-from modkmp import kmp_mod,kmp
+from modkmp import kmp_mod
 def naive_test(string, pat):
     out = []
     for i in range(len(string)-len(pat)+1):
@@ -30,3 +30,4 @@ def test_algo(algo_name, times, max_str_len, charset):
     print("All test passed")
 
 test_algo(kmp_mod, 100000, 100, string.ascii_lowercase[:6])
+
