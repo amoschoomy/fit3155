@@ -27,7 +27,7 @@ class Edge:
 
 class Node:
     def __init__(self) -> None:
-        self.edges=[None]*256 #to traverse the tree
+        self.edges=[None]*(127-36) #to traverse the tree
         self.suffix_link=None#suffix link, set to root after creation
         self.id=None #suffix id, only at leaf
     
@@ -38,7 +38,7 @@ class Node:
         # Add or Replace edges
         # If None == add
         # If got already == replace
-        self.edges[ord(char)]=edge
+        self.edges[ord(char)-36]=edge
     
 
 class Active:
@@ -57,17 +57,17 @@ class SuffixTree:
     def build(self): #build suffix tree
         ukkonen(self.root,self.word)
     
-    def traverse(self):
+    def build_suffix_array(self):
         #IN order traversal?? maybe
         suffix_array=[]
         self.inorder(self.root,suffix_array)
-        print(suffix_array)
+        return suffix_array
     
     def inorder(self,node:Node,suffix_array:List):
         if node.id is not None:
             suffix_array.append(node.id)
         else:
-            for i in range(256):
+            for i in range(127-36):
                 if node.edges[i] is not None:
                     self.inorder(node.edges[i].node,suffix_array)
 
@@ -113,9 +113,9 @@ def ukkonen(root:Node,pattern:str):
                 skip_count=active.length
 
             #Do extension directly from the active node - enabled by active length 0
-            if (active.node is root or active.node.edges[ord(pattern[i])] is None) and (active.length==0):
+            if (active.node is root or active.node.edges[ord(pattern[i])-36] is None) and (active.length==0):
 
-                if active.node.edges[ord(pattern[i])] is None:
+                if active.node.edges[ord(pattern[i])-36] is None:
                     #rule 2 extension
                     new_node=Node()
                     new_edge=Edge(new_node,j,end)
@@ -135,22 +135,22 @@ def ukkonen(root:Node,pattern:str):
                         if active.node is not root:
                             active.node=active.node.suffix_link
                             if active.edge is not None:
-                                active.edge=active.node.edges[ord(pattern[active.edge.start])] #new Active edge will follow the char of the old active edge 
+                                active.edge=active.node.edges[ord(pattern[active.edge.start])-36] #new Active edge will follow the char of the old active edge 
                         else: #if at root, decrement active length, change active edge
                             active.length-=1
-                            active.edge=active.node.edges[ord(pattern[j])]
+                            active.edge=active.node.edges[ord(pattern[j])-36]
                         
                 else:
                     #rule 3 showstopper, increment active length, move to new phase
                     i+=1
-                    active.edge=active.node.edges[ord(pattern[j])]
+                    active.edge=active.node.edges[ord(pattern[j])-36]
                     active.length+=1 
 
                     # move active node and edge if active length exceeded the maximum end of the current active edge
                     if active.length>active.edge.get_end():
                         active.length=0
                         active.node=active.edge.node
-                        active.edge=active.node.edges[ord(pattern[i])]
+                        active.edge=active.node.edges[ord(pattern[i])-36]
                     break    
 
 
@@ -195,7 +195,7 @@ def ukkonen(root:Node,pattern:str):
                     j+=1
                     if active.length!=0:
                         active.length-=1
-                    active.edge=active.node.edges[ord(pattern[j])]
+                    active.edge=active.node.edges[ord(pattern[j])-36]
                     break
 
                 else:
@@ -204,39 +204,42 @@ def ukkonen(root:Node,pattern:str):
                     if active.node is not root: #Follow suffix link and do not decrement active length
                         
                         active.node=active.node.suffix_link
-                        active.edge=active.node.edges[ord(pattern[start])]
+                        active.edge=active.node.edges[ord(pattern[start])-36]
 
                         #Move active node and active edge if already exceed end of current of active edge
                         if active.length>active.edge.get_end():
                             active.node=active.edge.node
                             active.length=0
-                            active.edge=active.node.edges[ord(pattern[i])]
+                            active.edge=active.node.edges[ord(pattern[i])-36]
 
                     else:
 
                         active.length-=1
-                        active.edge=active.node.edges[ord(pattern[j])]
+                        active.edge=active.node.edges[ord(pattern[j])-36]
 
                         if active.edge is not None:
                             if active.length>active.edge.get_end():
                                 active.node=active.edge.node
                                 active.length=0
-                                active.edge=active.node.edges[ord(pattern[i])]
+                                active.edge=active.node.edges[ord(pattern[i])-36]
 
             else:
                 #rule 3 showstopper, increment i, start new phase immediately
                 i+=1
                 if active.edge is  None:
-                    active.edge=active.node.edges[ord(pattern[j])]
+                    active.edge=active.node.edges[ord(pattern[j])-36]
                 active.length+=1
                 if active.length>active.edge.get_end():
                     active.length=0
                     active.node=active.edge.node
-                    active.edge=active.node.edges[ord(pattern[i])]
+                    active.edge=active.node.edges[ord(pattern[i])-36]
 
                 break
     return root #optional? maybe since we doing in class
      
-st=SuffixTree(Node(),"abcabxabcyab")
-st.build()
-st.traverse()
+# st=SuffixTree(Node(),"abcabxabcyab")
+# st.build()
+# sa=st.build_suffix_array()
+# print(sa)
+
+
