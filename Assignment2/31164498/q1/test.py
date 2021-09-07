@@ -45,7 +45,7 @@ class Active:
     #Active class
     def __init__(self,root:Node) -> None:
         self.node=root 
-        self.length=-1 # length -1 == traverse directly from active node
+        self.length=0 # length 0 == traverse directly from active node
         self.edge=None
 
 
@@ -80,24 +80,17 @@ def ukkonen(root:Node,pattern:str):
     """
     O(N) complete Ukkonen algorithm
     2 passes maximum needed to compute Suffix Tree
-
     4 tricks , 3 rules
-
     Rule 1 supplemented by a leave always a leave
-
     Traverse a tree use skip count trick and suffix link in O(1) time
-
     Rule 2 is branching 
     Rule 3 is do nothing -- converted to showstopper trick
-
-
     
     
     """
     i,j=0,0
-    root.suffix_link=root
+    pattern+="$" #add terminal
     n=len(pattern)
-    count=1
     end=End() #end class
     active=Active(root) #active class, active node at start always root
     while i<n:
@@ -107,8 +100,6 @@ def ukkonen(root:Node,pattern:str):
         while j<=i: # add suffixes to tree from j...i
         
             print(i,j)
-            count+=1
-            print("step ",count)
             #Calculate skip count val 
             if active.edge is not None:
                 skip_count=active.edge.start+active.length
@@ -116,7 +107,7 @@ def ukkonen(root:Node,pattern:str):
                 skip_count=active.length
 
             #Do extension directly from the active node - enabled by active length 0
-            if (active.node is root or active.node.edges[ord(pattern[i])-36] is None) and (active.length==-1):
+            if (active.node is root or active.node.edges[ord(pattern[i])-36] is None) and (active.length==0):
 
                 if active.node.edges[ord(pattern[i])-36] is None:
                     #rule 2 extension
@@ -137,22 +128,11 @@ def ukkonen(root:Node,pattern:str):
                         #Do not change active length if follow suffix link
                         if active.node is not root:
                             active.node=active.node.suffix_link
-                            # if active.edge is not None:
-                            #     active.edge=active.node.edges[ord(pattern[active.edge.start])-36] #new Active edge will follow the char of the old active edge
-                            # active.edge=active.node.edges[ord(pattern[j])-36]
-                            # if active.edge is not None and active.length==-1:
-                            #     active.node=active.edge.node
                             active.edge=active.node.edges[ord(pattern[j])-36]
-                            if active.edge is not None:
-                                if i-j>(active.edge.get_end()-active.edge.start):
-                                    active.node=active.edge.node
-                                    active.edge=active.node.edges[ord(pattern[i])-36]
 
                         else: #if at root, decrement active length, change active edge
                             active.length-=1
                             active.edge=active.node.edges[ord(pattern[j])-36]
-
-
                         
                 else:
                     #rule 3 showstopper, increment active length, move to new phase
@@ -161,19 +141,20 @@ def ukkonen(root:Node,pattern:str):
                     active.length+=1 
 
                     # move active node and edge if active length exceeded the maximum end of the current active edge
-                    if active.length>=(active.edge.get_end()-active.edge.start):
+                    if active.length>=(active.edge.get_end()-active.edge.start+1):
                         active.node=active.edge.node
                         skip=active.length
                         active.length-=(active.edge.get_end()-active.edge.start+1)
                         active.edge=active.node.edges[ord(pattern[i])-36]
-                    break    
+                    break        
 
 
-            elif (pattern[i]!=pattern[skip_count+1] and active.length!=-1 and active.edge is not None): #using skip count instead to compare, enaled by active length present>0
+            elif (pattern[i]!=pattern[skip_count] and active.length!=0): #using skip count instead to compare, enaled by active length present>0
                 #Mismatch found
 
+                start=active.edge.start #start of active edge
 
-                start=active.edge.start    
+                    
                 if skip_count==active.edge.get_end(): 
                     #if reached the end edge of that node, branch and create a new node
                     #new node will be at terminal
@@ -186,9 +167,9 @@ def ukkonen(root:Node,pattern:str):
                     # iF in between edges
                     new_node=Node() #create new intermediate node
                     new_node.suffix_link=root #every intermediate suffix link ==root
-                    active.edge.start=skip_count+1 #change active edge start -- to be skip count
+                    active.edge.start=skip_count #change active edge start -- to be skip count
                     new_node.add_edge(pattern[active.edge.start],active.edge) #new node now connect to active edge instead
-                    new_edge=Edge(new_node,start,start+active.length) #new edge that will link to new node
+                    new_edge=Edge(new_node,start,start+active.length-1) #new edge that will link to new node
                     active.node.add_edge(pattern[start],new_edge) #active node now connected to new node using new edge
 
                     #A branch will also be created at index [i,end]
@@ -207,7 +188,7 @@ def ukkonen(root:Node,pattern:str):
                 if i==j:
                     i+=1
                     j+=1
-                    if active.length>-1:
+                    if active.length>0:
                         active.length-=1
                     active.edge=active.node.edges[ord(pattern[j])-36]
                     break
@@ -221,11 +202,12 @@ def ukkonen(root:Node,pattern:str):
                         active.edge=active.node.edges[ord(pattern[start])-36]
 
                         #Move active node and active edge if already exceed end of current of active edge
-                        if active.length>=(active.edge.get_end()-active.edge.start):
+                        if active.length>=(active.edge.get_end()-active.edge.start+1):
                             active.node=active.edge.node
                             skip=active.length
                             active.length-=(active.edge.get_end()-active.edge.start+1)
-                            active.edge=active.node.edges[ord(pattern[j+skip])-36]
+                            active.edge=active.node.edges[ord(pattern[active.edge.end+skip])-36]
+
 
                     else:
 
@@ -233,12 +215,11 @@ def ukkonen(root:Node,pattern:str):
                         active.edge=active.node.edges[ord(pattern[j])-36]
 
                         if active.edge is not None:
-                            if active.length>=(active.edge.get_end()-active.edge.start):
+                            if active.length>=(active.edge.get_end()-active.edge.start+1):
                                 active.node=active.edge.node
                                 skip=active.length
-                                val=(active.edge.get_end()-active.edge.start+1)
-                                active.length-=val
-                                active.edge=active.node.edges[ord(pattern[j+1])-36]
+                                active.length-=(active.edge.get_end()-active.edge.start+1)
+                                active.edge=active.node.edges[ord(pattern[i])-36]
 
             else:
                 #rule 3 showstopper, increment i, start new phase immediately
@@ -247,21 +228,29 @@ def ukkonen(root:Node,pattern:str):
                     active.edge=active.node.edges[ord(pattern[j])-36]
                 active.length+=1
                 if active.edge is not None:
-                    if active.length>=(active.edge.get_end()-active.edge.start):
+                    if active.length>=(active.edge.get_end()-active.edge.start+1):
                         active.node=active.edge.node
                         skip=active.length
                         active.length-=(active.edge.get_end()-active.edge.start+1)
                         active.edge=active.node.edges[ord(pattern[i])-36]
+
                 break
     return root #optional? maybe since we doing in class
-     
-# # st=SuffixTree(Node(),"suffix_trees_and_bwt_are_related$")
-# st=SuffixTree(Node(),"abcabxabcyab$")
-# # st=SuffixTree(Node(),"mississippi$")
 
+def bwt(text:str):
+    st=SuffixTree(Node(),text)
+    st.build()
+    suffix_array=st.build_suffix_array()
+    print(len(suffix_array))
+    result=[None]*(len(text))
+    for i in range(len(text)):
+        # print(suffix_array[i])
+        if suffix_array[i]==0:
+            result[i]="$"
+        else:
+            result[i]=text[suffix_array[i]-1]
+    return result     
+# st=SuffixTree(Node(),"suffix_trees_and_bwt_are_related")
 # st.build()
 # sa=st.build_suffix_array()
-# print(sa)
-# print(len(sa))
-
-
+print(bwt("suffix_trees_and_bwt_are_related"))
