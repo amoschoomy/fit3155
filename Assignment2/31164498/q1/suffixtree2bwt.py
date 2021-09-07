@@ -26,12 +26,16 @@ def write_tofile(bwt:List[str]):
         f.write("".join(bwt))
 
 def bwt(text:str):
+    """
+    Convert suffix array to BWT
+    Code referenced from FIT2004 Lecture Notes (Daniel Anderson) pg98
+    
+    """
     st=SuffixTree(Node(),text)
     st.build()
     suffix_array=st.build_suffix_array()
     result=[None]*(len(text))
-    for i in range(len(text)):
-        # print(suffix_array[i])
+    for i in range(len(suffix_array)):
         if suffix_array[i]==0:
             result[i]="$"
         else:

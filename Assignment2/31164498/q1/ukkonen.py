@@ -166,8 +166,8 @@ def ukkonen(root:Node,pattern:str):
                         active.edge=active.node.edges[ord(pattern[i])-36]
                     break    
 
-
-            elif (pattern[i]!=pattern[skip_count+1] and active.length!=-1 and active.edge is not None): #using skip count instead to compare, enaled by active length present>0
+            #Use active length as comparison from the active node instead, enforced by presence of active edge and non negative active length
+            elif (pattern[i]!=pattern[skip_count+1] and active.length!=-1 and active.edge is not None):
                 #Mismatch found
 
 
@@ -184,7 +184,7 @@ def ukkonen(root:Node,pattern:str):
                     # iF in between edges
                     new_node=Node() #create new intermediate node
                     new_node.suffix_link=root #every intermediate suffix link ==root
-                    active.edge.start=skip_count+1 #change active edge start -- to be skip count
+                    active.edge.start=skip_count+1 #change active edge start
                     new_node.add_edge(pattern[active.edge.start],active.edge) #new node now connect to active edge instead
                     new_edge=Edge(new_node,start,start+active.length) #new edge that will link to new node
                     active.node.add_edge(pattern[start],new_edge) #active node now connected to new node using new edge
@@ -225,12 +225,13 @@ def ukkonen(root:Node,pattern:str):
                             active.length-=(active.edge.get_end()-active.edge.start+1)
                             active.edge=active.node.edges[ord(pattern[j+1])-36]
 
-                    else:
+                    else: #If suffix link root, decrement it and go to new Active edge
 
                         active.length-=1
                         active.edge=active.node.edges[ord(pattern[j])-36]
 
                         if active.edge is not None:
+                            #if active length exceeded, go to new active node
                             if active.length>=(active.edge.get_end()-active.edge.start):
                                 active.node=active.edge.node
                                 skip=active.length
@@ -251,17 +252,19 @@ def ukkonen(root:Node,pattern:str):
                         active.length-=(active.edge.get_end()-active.edge.start+1)
                         active.edge=active.node.edges[ord(pattern[i])-36]
                 break
-    return root #optional? maybe since we doing in class
+    return root
      
 # st=SuffixTree(Node(),"suffix_trees_and_bwt_are_related$")
 # st=SuffixTree(Node(),"abcabxabcyab$")
 # st=SuffixTree(Node(),"mississippi$")
 # st=SuffixTree(Node(),"ukkonen$")
-st=SuffixTree(Node(),"allahllahaha$")
+# st=SuffixTree(Node(),"allahllahaha$")
+# st=SuffixTree(Node(),"aaabbbccca$")
 
-st.build()
-sa=st.build_suffix_array()
-print(sa)
-print(len(sa))
+
+# st.build()
+# sa=st.build_suffix_array()
+# print(sa)
+# print(len(sa))
 
 
