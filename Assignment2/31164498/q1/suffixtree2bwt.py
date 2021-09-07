@@ -18,20 +18,17 @@ def read_file(txt_file):
         txt=f.read()
     return txt
 
-def write_tofile(bwt:str):
+def write_tofile(bwt:List[str]):
     """
     Write to file
     """
     with open("output_bwt.txt","w",encoding="utf-8") as f:
-        f.write(bwt)
+        f.write("".join(bwt))
 
 def bwt(text:str):
     st=SuffixTree(Node(),text)
     st.build()
     suffix_array=st.build_suffix_array()
-    print(suffix_array)
-    print(len(suffix_array))
-    print(text)
     result=[None]*(len(text))
     for i in range(len(text)):
         # print(suffix_array[i])
@@ -39,8 +36,6 @@ def bwt(text:str):
             result[i]="$"
         else:
             result[i]=text[suffix_array[i]-1]
-        print(result[i])
-    print(result)
     return result
 
 
@@ -49,6 +44,7 @@ def bwt(text:str):
 if __name__=="__main__":
     txt_file=sys.argv[1]
     txt=read_file(txt_file)
-    bwt(txt)
+    bwt_string=bwt(txt)
+    write_tofile(bwt_string)
 
         
