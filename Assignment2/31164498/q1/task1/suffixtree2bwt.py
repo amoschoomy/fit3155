@@ -33,7 +33,7 @@ def bwt(text:str):
     """
     st=SuffixTree(Node(),text)
     st.build()
-    suffix_array=st.build_suffix_array()
+    suffix_array=st.build_suffix_array()  # -> code in ukkonen file
     result=[None]*(len(text))
     for i in range(len(suffix_array)):
         if suffix_array[i]==0:
