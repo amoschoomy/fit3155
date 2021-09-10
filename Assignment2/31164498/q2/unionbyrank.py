@@ -10,7 +10,7 @@ def find(a:int,parent:List[int]):
     if parent[a]<0:
         return a
     else:
-        parent[a]=find(a,parent)
+        parent[a]=find(parent[a],parent)
         return parent[a]
 
 def union(a,b,parent):
@@ -20,11 +20,15 @@ def union(a,b,parent):
     height_b=-parent[root_b]
     if height_a>height_b:
         parent[root_b]=root_a
+        return root_a,root_b
     elif height_a<height_b:
         parent[root_a]=root_b
+        return root_b,root_a
+
     else:
         parent[root_a]=root_b
         parent[root_b]=-(height_b+1)
+        return root_b,root_a
 
 
 
