@@ -94,7 +94,6 @@ def ukkonen(root:Node,pattern:str):
     
     
     """
-    step=0
     i,j=0,0
     root.suffix_link=root
     end=End()
@@ -103,16 +102,21 @@ def ukkonen(root:Node,pattern:str):
     while i<n:
         previous_node=None #reset previous node at every new phase i
         end.increment() # increment global end
+
         while j<=i:
+
+            #Calc traversal steps from active edge if possibe
             if active.edge is not None:
                 skip_count=active.edge.start+active.length+1
             else:
                 skip_count=active.length
             
+            #Perform traversal from active node directly
             if active.length==-1 and active.node.edges[ord(pattern[i])-36] is None:
-                if active.node.edges[ord(pattern[i])-36] is None:
 
-                    #rule 2 extension
+
+                if active.node.edges[ord(pattern[i])-36] is None:
+                    #Do a rule 2 extension
                     new_node=Node()
                     new_edge=Edge(new_node,i,end)
                     active.node.add_edge(pattern[i],new_edge)
@@ -129,14 +133,17 @@ def ukkonen(root:Node,pattern:str):
                         if active.node is not root:
                             active.node=active.node.suffix_link
                             active.edge=active.node.edges[ord(pattern[j])-36]
+
                             if active.edge is not None:
+                                #Move to edge according to remaining suffix length if possible
                                 if i-j>(active.edge.get_end()-active.edge.start):
                                     active.node=active.edge.node
                                     active.edge=active.node.edges[ord(pattern[i])-36]
 
+            #Inside active edge, so compare using skip count
             elif (pattern[i]!=pattern[skip_count] and active.length>-1 and active.edge is not None): 
  
-                # iF in between edges
+                #Rule 2 extension branching
                 start=active.edge.start
                 new_node=Node() #create new intermediate node
                 new_node.suffix_link=root #every intermediate suffix link ==root
@@ -168,7 +175,7 @@ def ukkonen(root:Node,pattern:str):
                         active.edge=active.node.edges[ord(pattern[start])-36]
                     else:
                         #Track active edge location from root, move to new node from
-                        #remaining suffixes
+                        #remaining suffixes length if possible
                         active.edge=active.node.edges[ord(pattern[j])-36]
                         if active.edge is not None:
                             if i-j>(active.edge.get_end()-active.edge.start):
@@ -202,29 +209,9 @@ def ukkonen(root:Node,pattern:str):
                     active.edge=active.node.edges[ord(pattern[j])-36]
 
                 if active.edge is not None:
-                    #Move to new node, if exceeded end edge
+                    #Move to new node, if exceeded end of active edge
                     if active.length>=(active.edge.get_end()-active.edge.start):
                         active.node=active.edge.node
                         active.length-=(active.edge.get_end()-active.edge.start+1)
                         active.edge=active.node.edges[ord(pattern[i])-36]
                 break     
-
-
-
-
-     
-# st=SuffixTree(Node(),"suffix_trees_and_bwt_are_related$")
-# st=SuffixTree(Node(),"abcabxabcyab$")
-# st=SuffixTree(Node(),"mississippi$")
-# st=SuffixTree(Node(),"ukkonen$")
-st=SuffixTree(Node(),"allahllahaha$")
-# st=SuffixTree(Node(),"aaabbbccca$")
-# st=SuffixTree(Node(),"ddedadudadededududum$")
-
-
-# st.build()
-# sa=st.build_suffix_array()
-# print(sa)
-# print(len(sa))
-
-
