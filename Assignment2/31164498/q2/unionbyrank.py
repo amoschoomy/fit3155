@@ -2,6 +2,7 @@
 from typing import List
 
 
+#Code referenced from Lecture slides week 4 with slight modifcation
 def init_set(n:int):
     parent=[-1]*n
     return parent
