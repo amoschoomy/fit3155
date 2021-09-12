@@ -203,7 +203,7 @@ class FibHeap:
 
         """
         parent = node.parent
-        if parent is None or parent.distance < val:  # still maintain property leave it - Case 1
+        if parent is None or parent.distance <= val:  # still maintain property leave it - Case 1
             node.distance = val
 
         else:
