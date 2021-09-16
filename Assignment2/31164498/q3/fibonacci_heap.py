@@ -221,7 +221,7 @@ class FibHeap:
 
             else:  # if parent is marked, do cascading cut until reached root, or no more parent is marked
                 # Case 2B
-                while parent.mark and parent.parent is not None:
+                while True:
                     if parent.children is parent.children.right_sibling:
                         parent.children = None
                     elif parent.children is node:
@@ -230,7 +230,12 @@ class FibHeap:
                     self.cut(node)
                     parent.degree -= 1
                     node = parent
-                    parent = parent.parent
+                    parent = node.parent
+                    if not node.mark: #if previous parent is unmarked, mark it and stop
+                        node.mark=True
+                        break
+                    elif node.parent is None: #if previous parent is the root, stop
+                        break
                 node.distance = val
         if val < self.minimum.distance:
             self.minimum = node
