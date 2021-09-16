@@ -27,6 +27,7 @@ def all_hamming_distance(lst):
     for i in range(len(lst)):
         for j in range(len(lst)):
             if i>=j :
+                j=i+1
                 continue
             h_d = hamming_distance(lst[i], lst[j])
             if h_d <= 2:
