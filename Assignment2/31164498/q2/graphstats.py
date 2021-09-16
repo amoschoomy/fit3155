@@ -27,9 +27,12 @@ def all_hamming_distance(lst):
     lst_of_edges = []
     for i in range(len(lst)):
         for j in range(len(lst)):
+            if i>=j :
+                continue
             h_d = hamming_distance(lst[i], lst[j])
-            if i != j and h_d <= 2:
+            if h_d <= 2:
                 lst_of_edges.append((i, j, h_d))
+                lst_of_edges.append((j,i,h_d))
     return lst_of_edges
 
 
