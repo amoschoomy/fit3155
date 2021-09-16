@@ -1,5 +1,4 @@
 import sys
-from typing import List, Tuple
 from unionbyrank import find, union, init_set
 
 

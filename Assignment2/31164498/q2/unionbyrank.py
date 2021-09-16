@@ -1,13 +1,12 @@
 
-from typing import List
 
 
 #Code referenced from Lecture slides week 4 with slight modifcation
-def init_set(n:int):
+def init_set(n):
     parent=[-1]*n
     return parent
 
-def find(a:int,parent:List[int]):
+def find(a,parent):
     if parent[a]<0:
         return a
     else:
