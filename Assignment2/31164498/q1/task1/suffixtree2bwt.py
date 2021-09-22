@@ -31,6 +31,7 @@ def bwt(text:str):
     Code referenced from FIT2004 Lecture Notes (Daniel Anderson) pg98
     
     """
+    text+="$"
     st=SuffixTree(Node(),text)
     st.build()
     suffix_array=st.build_suffix_array()  # -> code in ukkonen file
