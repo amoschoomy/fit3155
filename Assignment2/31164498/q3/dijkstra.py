@@ -143,6 +143,8 @@ def djikstra(graph:Graph,source:int):
     """
    
    Dijkstra algorithm using Fibonacci heap
+   Code referenced previously from FIT2004 lecture notes
+   From Assignment 4 2021
 
     """
 
@@ -161,7 +163,6 @@ def djikstra(graph:Graph,source:int):
         fib_heap.insert(node)
 
 
-    
     while not fib_heap.is_empty():
         node=fib_heap.extract_min()
         vertex=graph.vertices[node.key]

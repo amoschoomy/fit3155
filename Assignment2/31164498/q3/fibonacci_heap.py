@@ -1,4 +1,4 @@
-from math import inf, log
+from math import inf, log2
 
 """
 Name: Amos Choo Jia Shern
@@ -9,16 +9,15 @@ ID: 31164498
 class Node:
     def __init__(self, key, distance=None) -> None:
         self.key = key
-        self.vertex = None
         self.distance = distance  # data
         self.degree = 0  # how many children
         self.mark = False  # node marked?
         self.parent = None  # parent of node - only one per node
         # any one children - so can traverse other children through their siblings
         self.children = None
-        self.left_sibling = self  # left sibling
-        self.right_sibling = self  # right sibling
-
+        self.left = self  # left sibling
+        self.right = self  # right sibling
+    
 
 class FibHeap:
     """
@@ -43,7 +42,7 @@ class FibHeap:
         if self.minimum is None:
             raise ValueError("No node found")
         return self.minimum
-
+    
     def merge(self, heap):
         """
         Merge two Fh
@@ -52,10 +51,10 @@ class FibHeap:
 
         """
 
-        self.get_min().left_sibling.right_sibling = heap.get_min().right_sibling
-        heap.get_min().right_sibling.left_sibling = self.get_min().left_sibling
-        heap.get_min().right_sibling = self.get_min()
-        self.get_min().left_sibling = heap.get_min()
+        self.get_min().left.right = heap.get_min().right
+        heap.get_min().right.left = self.get_min().left
+        heap.get_min().right = self.get_min()
+        self.get_min().left = heap.get_min()
 
         if self.get_min().distance > heap.get_min().distance:
             self.minimum = heap.get_min()
@@ -76,176 +75,195 @@ class FibHeap:
             self.merge(new_heap)
             self.total_nodes += 1
 
-    def merge_node_into_root(self, node: Node):
-        """
-        Merge node into root , same thing as merging heap above but specific
-        to node only without changing minimum
-
-        Code referenced and adapted from FIT3155 lecture notes(Taylor) Week 6 pg6
+    
+        # # merge a node with the doubly linked root list
 
 
-        """
-        if self.minimum is None:
-            self.minimum = node
+    
+    def extract_min(self):
+
+        minimum = self.minimum
+        if minimum.children is not None:
+            end= minimum.children.left #end at children left
+            node=minimum.children
+            temp_right=node.right
+
+            while True: #go through all children siblings and merge them into the root
+                temp_right=node.right
+                next_left=node
+                self.merge_to_root(node)
+                node.parent = None
+                node = temp_right
+                if next_left is end:
+                    break
+
+        minimum.left.right = minimum.right #connect left sibling to right sibling vice versa
+        minimum.right.left = minimum.left
+
+        
+        self.total_nodes -= 1 # old minimum no longer at the heap, decrement them, and find new min
+
+        if minimum is minimum.right: #since its linking to itself, if right sibling also the same node,
+            #means no more minimum
+            self.minimum= None
+
         else:
-            self.get_min().left_sibling.right_sibling = node.right_sibling
-            node.right_sibling.left_sibling = self.get_min().left_sibling
-            node.right_sibling = self.get_min()
-            self.get_min().left_sibling = node
+            self.minimum = minimum.right #set temp min to the right
+        if self.minimum is not None: 
+            self.consolidate() #only consolidate when at least one node at heap, otherwise math error
+        return minimum
+
+
+    def merge_to_root(self, node:Node):
+
+        """
+        Merge a node into the root,
+        extract min and for cutting usage
+
+        Code adapted and modified from FIT3155 lecture notes Week 6 (Taylor) pg6
+        
+        """
+        self.get_min().left.right = node
+        node.left = self.get_min().left
+        node.right = self.get_min()
+        self.get_min().left = node
+    
+
+    def consolidate(self):
+
+        degree_array = [None] * (int(log2((self.total_nodes))+2)) #+2 for zero based indexing
+
+        node = self.get_min()
+        end = node.left
+
+        while True: #consolidate along the root
+
+            deg = node.degree
+            next = node.right
+            next_left = next.left
+            while degree_array[deg] is not None:  # make sure only one deg per heap
+
+                if degree_array[deg].distance>node.distance:
+                    node = self.merge_node_into_parent(node, degree_array[deg]) #merge to increase degree
+                else:
+                    node = self.merge_node_into_parent(degree_array[deg], node) #merge to increase
+
+                degree_array[deg] = None
+                deg += 1 #go to next degree
+
+            # node either by merging or ori go into the degree
+            degree_array[deg] = node
+
+            if node.distance <= self.get_min().distance:  # if found new minimum update self.minimum
+                self.minimum = node
+            node = next  # move to right sibling
+            if next_left is end:  # finish interating through all nodes at root
+                break
+
 
     def merge_node_into_parent(self, parent: Node, node: Node):
         """
-        Merge node into parent
+        Merge node into parent, for consolidate purpose
 
         """
 
         # Node no longer connected with its sibling vice versa
         # remove the middle node bwtween the sibling
-        node.left_sibling.right_sibling = node.right_sibling
-        # remove the millde node between the sibling
-        node.right_sibling.left_sibling = node.left_sibling
-        node.left_sibling = node
-        node.right_sibling = node
+
+        if node is self.minimum: #if node is minimum, move minimum to the right
+            self.minimum=node.right
+
+        #Severe sibling links, link back to itself    
+        node.left.right = node.right
+        node.right.left = node.left
+        node.left = node
+        node.right = node
 
         if parent.children is None:
             parent.children = node
+
         else:
+
             # Connect the node to the children by adjusting the links
-            # Code referenced and adapted from FIT3155 lecture notes(Taylor) Week 6 pg6
-            node.left_sibling.right_sibling = parent.children.right_sibling
-            parent.children.right_sibling.left_sibling = node.left_sibling
-            parent.children.right_sibling = node
-            node.left_sibling = parent.children
+            # Code adapted and modified from FIT3155 lecture notes(Taylor) Week 6
+            parent.children.left.right = node
+            node.left = parent.children.left
+            node.right = parent.children
+            parent.children.left = node
 
         parent.degree += 1  # parent degree increase by 1
         node.parent = parent
-        node.mark = False
+        node.mark = False #unmark them
         return parent
 
-    def extract_min(self):
-        minimum_element = self.get_min()
 
-        # Remove sibling links to and from the minimum element
-        ls = minimum_element.left_sibling
-        rs = minimum_element.right_sibling
-        ls.right_sibling = rs
-        rs.left_sibling = ls
 
-        # if min sibling point to itself == no more min when removed
-        if minimum_element is minimum_element.right_sibling:
-            self.minimum = None
-        else:
-            self.minimum = rs  # set temp minimum to right sibling first
-
-        # link to itself
-        minimum_element.left_sibling = minimum_element
-        minimum_element.right_sibling = minimum_element
-
-        self.total_nodes -= 1  # Node no longer in the heap, decrease them
-
-        if minimum_element.children is not None:  # only touch children if there exists
-
-            children = minimum_element.children
-            end = children.left_sibling
-
-            # merge all children into root
-            while True:
-                next = children.right_sibling
-                next_left = next.left_sibling
-                children.parent = None
-                self.merge_node_into_root(children)
-                children = next
-                if next_left is end:
-                    break
-
-        if self.minimum is not None:
-            self.consolidate()  # only consolidate the heap if exists minimum element
-        return minimum_element
-
-    def consolidate(self):
-        # +2 because 0 indexing
-        degree_array = [None]*int(log(self.total_nodes)+2)
-        node = self.get_min()
-        end = node.left_sibling
-        while True:
-            if node.distance < self.get_min().distance:  # if found new minimum update self.minimum
-                self.minimum = node
-            deg = node.degree
-            next = node.right_sibling
-            next_left = next.left_sibling
-            while degree_array[deg] is not None:  # make sure only one deg per heap
-                if degree_array[deg].distance > node.distance:
-                    # do that by increasing degree eg b0+b0=b1
-                    node = self.merge_node_into_parent(node, degree_array[deg])
-                else:
-                    # do that by increasing degree eg b0+b0=b1
-                    node = self.merge_node_into_parent(degree_array[deg], node)
-                degree_array[deg] = None
-                deg += 1
-            # node either by merging or ori go into the degree
-            degree_array[deg] = node
-            node = next  # move to right sibling
-            if next_left is end:  # finish interating through all children
-                break
-
-    def cut(self, node: Node):
+    def decrease_key(self, node:Node, val):
         """
-        Cut the links of the node and merge to root
-
+        
+        Decrease key given a new value
         """
-
-        node.left_sibling.right_sibling = node.right_sibling  # remove node from sibling
-        node.right_sibling.left_sibling = node.left_sibling  # remove node from sibling
-        node.right_sibling = node
-        node.left_sibling = node
-        self.merge_node_into_root(node)
-        node.parent = None
-        node.mark = False
-
-    def decrease_key(self, node: Node, val):
-        """
-        Decreaase key of the node given node and val
-
-        """
+ 
         parent = node.parent
         if parent is None or parent.distance <= val:  # still maintain property leave it - Case 1
             node.distance = val
-
+        
         else:
-            if not parent.mark:  # if parent is unmarked -- Case 2A
-                if parent.children is parent.children.right_sibling:
-                    parent.children = None
-                elif parent.children is node:
-                    parent.children = node.right_sibling
-                    node.right_sibling.parent = parent
-
-                self.cut(node)
+            if not parent.mark:
+                self.unlink_node_and_parent(parent,node)  # if parent is unmarked -- Case 2A
+                self.promote_and_unmark(node)
                 parent.mark = True
                 parent.degree -= 1
                 node.distance = val
-
-            else:  # if parent is marked, do cascading cut until reached root, or no more parent is marked
-                # Case 2B
-                while True:
-                    if parent.children is parent.children.right_sibling:
-                        parent.children = None
-                    elif parent.children is node:
-                        parent.children = node.right_sibling
-                        node.right_sibling.parent = parent
-                    self.cut(node)
+            else:
+                node.distance=val
+                while True: #Case 2B - cascading cut -> keep cutting until find unmarked/reach root
+                    self.unlink_node_and_parent(parent,node)
+                    self.promote_and_unmark(node)
                     parent.degree -= 1
-                    node = parent
-                    parent = node.parent
-                    if not node.mark: #if previous parent is unmarked, mark it and stop
-                        node.mark=True
+
+                    if not parent.mark:
+                        parent.mark=True
                         break
-                    elif node.parent is None: #if previous parent is the root, stop
+                    elif parent.parent is None:
                         break
-                node.distance = val
+                    node=parent
+                    parent=node.parent
 
         if val < self.minimum.distance:
             self.minimum = node
 
+    def unlink_node_and_parent(self, parent, node):
+        """
+        Unlink node and parent, used at cutting
+
+        """
+
+        if parent.children is parent.children.right: #if children its own sibling, means no more child since its self linking
+            parent.children = None
+
+        elif parent.children is node: #if directly at children, give to right sibling of children
+            parent.children = node.right
+            node.right.parent = parent
+
+        #connect left to right each other
+        node.left.right = node.right
+        node.right.left = node.left
+
+
+    def promote_and_unmark(self,node):
+        """
+        Promote to root, and unmark it
+
+        """
+        self.merge_to_root(node)
+        node.parent=None
+        node.mark=False
+ 
     def delete(self, node):
+        """
+        Not needed, not tested, leaving it for potential future use
+        
+        """
         self.decrease_key(node, -inf)
         self.extract_min()
