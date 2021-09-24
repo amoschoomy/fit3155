@@ -2,6 +2,12 @@ import sys
 from unionbyrank import find, union, init_set
 
 
+"""
+Name: Amos Choo Jia Shern
+ID: 31164498
+
+"""
+
 def read_file(graph_file):
     with open(graph_file, "r", encoding="UTF-8") as f:
         lst = [x.rstrip() for x in f]
@@ -27,10 +33,11 @@ def all_hamming_distance(lst):
     for i in range(len(lst)):
         for j in range(len(lst)):
             if i>=j :
-                j=i+1
+                j=i+1 # skip to j=i+1
                 continue
             h_d = hamming_distance(lst[i], lst[j])
             if h_d <= 2:
+                #undirected edge
                 lst_of_edges.append((i, j, h_d))
                 lst_of_edges.append((j,i,h_d))
     return lst_of_edges
@@ -38,7 +45,7 @@ def all_hamming_distance(lst):
 
 def kruskal(lst, n):
     lst.sort(key=lambda x: x[2])
-    stats = [(1, 0)]*n  # stats array L=size R=weight
+    stats = [(1, 0)]*n  # stats array L=size R=weight ->
     count = n  # Initial N connected components
     parent = init_set(n)
     for edge in lst:

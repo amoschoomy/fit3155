@@ -18,7 +18,7 @@ def read_file(txt_file):
         txt=f.read()
     return txt
 
-def write_tofile(bwt:List[str]):
+def write_tofile(bwt):
     """
     Write to file
     """
@@ -34,7 +34,7 @@ def bwt(text:str):
     text+="$"
     st=SuffixTree(Node(),text)
     st.build()
-    suffix_array=st.build_suffix_array()  # -> code in ukkonen file
+    suffix_array=st.build_suffix_array()  # -> code in ukkonen file lines 60-75
     result=[None]*(len(text))
     for i in range(len(suffix_array)):
         if suffix_array[i]==0:

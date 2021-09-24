@@ -1,5 +1,10 @@
 from math import inf, log
 
+"""
+Name: Amos Choo Jia Shern
+ID: 31164498
+
+"""
 
 class Node:
     def __init__(self, key, distance=None) -> None:
@@ -237,6 +242,7 @@ class FibHeap:
                     elif node.parent is None: #if previous parent is the root, stop
                         break
                 node.distance = val
+
         if val < self.minimum.distance:
             self.minimum = node
 

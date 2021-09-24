@@ -1,4 +1,8 @@
+"""
+Name: Amos Choo Jia Shern
+ID: 31164498
 
+"""
 
 
 #Code referenced from Lecture slides week 4 with slight modifcation

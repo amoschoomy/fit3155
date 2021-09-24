@@ -2,6 +2,13 @@ import sys
 from typing import List
 from ukkonen import SuffixTree,Node,Edge
 
+"""
+Name: Amos Choo Jia Shern
+ID: 31164498
+
+"""
+
+
 def read_file(txt_file,pat_file):
     """
     Read file
@@ -61,10 +68,10 @@ def aux_pattern_find(pattern:str,node:Node,edge:Edge,i:int,count:int,word:str,no
 
     else:
 
-        if pattern[i]!="?" and edge is None:
+        if pattern[i]!="?" and edge is None: #not a wild card and not inside an edge -> enter an edge
             edge=node.edges[ord(pattern[i])-36]
             if edge is not None:
-                if edge.start+1>edge.get_end():
+                if edge.start+1>edge.get_end(): # exceeded edge end, so dont traverse insinde the edge anymore and go to edge node
                     aux_pattern_find(pattern,edge.node,None,i+1,-1,word,nodes)
                 else:
                     aux_pattern_find(pattern,node,edge,i+1,edge.start+1,word,nodes)

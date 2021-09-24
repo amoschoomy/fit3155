@@ -1,6 +1,12 @@
 from typing import List
 
 
+"""
+Name: Amos Choo Jia Shern
+ID: 31164498
+
+"""
+
 class End:  # global end variable // only use em at ukkonen leaf
     def __init__(self) -> None:
         self.end = -1  # start from -1, as it increments at the start of every

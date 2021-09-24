@@ -1,5 +1,11 @@
 from typing import List
 
+"""
+Name: Amos Choo Jia Shern
+ID: 31164498
+
+"""
+
 
 class End:  # global end variable // only use em at ukkonen leaf
     def __init__(self) -> None:
