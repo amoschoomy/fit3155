@@ -23,7 +23,7 @@ def fib_encode(max_n):
             if curr_max-fl[j]>=0:
                 encode[j]="1"
                 curr_max-=fl[j]
-                j+=1 #skip no conescutive 1    
+                j-=1 #skip no conescutive 1    
         print(i,"".join(encode))
 
 
