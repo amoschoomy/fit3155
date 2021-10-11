@@ -1,13 +1,5 @@
 import sys
 
-def fibonacci(max_val):
-    fl=[1,2]
-    i=2
-    while fl[-1]<=max_val:
-        fl.append(fl[i-1]+fl[i-2])
-        i+=1
-    return fl
-
 def fib_encode(max_n):
     fl=[1,2]
     k=2
