@@ -1,6 +1,48 @@
 from heapq import heappush,heappop,heapify
+
+class HuffmanTree():
+    def __init__(self) -> None:
+        self.root=Node()
+    
+    def add_code(self,bits,ptr,length,char):
+        current=self.root
+        for i in range(ptr,ptr+length):
+            bit=bits[i]
+            if bit==0:
+                if current.left is None:
+                    current.left=Node()
+                    current=current.left
+                else:
+                    current=current.left
+                if i==(ptr+length-1):
+                    if current is None:
+                        current=Node()
+                    current.char=char
+
+            else:
+                if current.right is None:
+                    current.right=Node()
+                    current=current.right
+                else:
+                    current=current.right
+                if i==(ptr+length-1):
+                    if current is None:
+                        current=Node()
+                    current.char=char
+
+
+    def traverse(self,bits,ptr):
+        current=self.root
+        for i in range(ptr,len(bits)):
+            if current.char is not None:
+                return current.char,i
+            else:
+                if bits[i]==1:
+                    current=current.right
+                else:
+                    current=current.left
 class Node:
-    def __init__(self,char,freq) -> None:
+    def __init__(self,char=None,freq=None) -> None:
         self.char=char
         self.freq=freq
         self.left=None
