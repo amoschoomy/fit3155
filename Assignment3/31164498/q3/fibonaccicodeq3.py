@@ -18,3 +18,22 @@ def fib_encode(n):
             curr_max-=fl[i]
             i-=1
     return "".join(encoding)
+
+def fib_decode(bits,ptr,fl:list):
+    val=0
+    fb_ptr=0
+    one_found=False
+    for i in range(ptr,len(bits)):
+        if bits[i]==1 and one_found:
+            ptr=i+1
+            break
+        elif bits[i]==1:
+
+            val+=fl[fb_ptr]
+            one_found=True
+        else:
+            one_found=False
+        fb_ptr+=1
+        if fb_ptr>=len(fl):
+            fl.append(fl[-1]+fl[-2])
+    return val,ptr

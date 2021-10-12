@@ -1,10 +1,8 @@
-from heapq import heapify,heappush,heappop
 from bitarray import bitarray
 from fibonaccicodeq3 import fib_encode
 import sys
-import binascii
+from huffman import encode_huffman
 
-print(binascii.a2b_uu("a"))
 
 class Node:
     def __init__(self,char,freq) -> None:
@@ -18,42 +16,6 @@ class Node:
         else:
             return self.freq<other.freq
 
-
-def encode_huffman(text:str):
-
-
-    node_list=find_character_freq(text)
-    heapify(node_list)
-    encoding=[[] for _ in range(127-36)] 
-    
-    while len(node_list)>1: #ensure two pops are done
-        node1=heappop(node_list)
-        node2=heappop(node_list)
-        new_node=Node(node1.char+node2.char,node1.freq+node2.freq)
-        for c in node1.char:
-            node1ord=ord(c)-36
-            encoding[node1ord].append("0")
-        for c in node2.char:
-            node2ord=ord(c)-36
-            encoding[node2ord].append("1")
-        heappush(node_list,new_node)
-    
-    encoding=reverse_huffman(encoding)
-    return encoding
-
-def find_character_freq(text:str):
-    """
-    Change to list instead dict
-
-    """
-    nodes=[]
-    table=[0]*(127-36)
-    for char in text:
-        table[ord(char)-36]+=1
-    for c in range(len(table)):
-        if table[c]!=0:
-            nodes.append(Node(chr(c+36),table[c]))
-    return nodes
 
 
 def run_length_encoding(text:str,huffman_encodings:list):
@@ -76,12 +38,20 @@ def run_length_encoding(text:str,huffman_encodings:list):
     return "".join(encode_string)
     
 
-def reverse_huffman(huffman_encodings):
-    for e in range(len(huffman_encodings)):
-        if len(huffman_encodings[e])!=0:
-            huffman_encodings[e]="".join(huffman_encodings[e][::-1])
-    return huffman_encodings
 
+def find_character_freq(text:str):
+    """
+    Change to list instead dict
+
+    """
+    nodes=[]
+    table=[0]*(127-36)
+    for char in text:
+        table[ord(char)-36]+=1
+    for c in range(len(table)):
+        if table[c]!=0:
+            nodes.append(Node(chr(c+36),table[c]))
+    return nodes
 
 def encode_bwt(text:str):
     length=len(text)
@@ -98,7 +68,7 @@ def encode_bwt(text:str):
 
 
         char_encodings=[]
-        huffman_encodings=encode_huffman(text)
+        huffman_encodings=encode_huffman(text,nodes)
         for node in nodes:
             c=node.char
             char_encodings.append(format(ord(c),"07b"))
