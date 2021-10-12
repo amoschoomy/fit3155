@@ -1,6 +1,7 @@
 from heapq import heapify,heappush,heappop
 from bitarray import bitarray
 from fibonaccicodeq3 import fib_encode
+import sys
 
 class Node:
     def __init__(self,char,freq) -> None:
@@ -76,7 +77,8 @@ def run_length_encoding(text:str,huffman_encodings:list):
 
 def reverse_huffman(huffman_encodings):
     for e in range(len(huffman_encodings)):
-        huffman_encodings[e]="".join(huffman_encodings[e][::-1])
+        if len(huffman_encodings[e])!=0:
+            huffman_encodings[e]="".join(huffman_encodings[e][::-1])
     return huffman_encodings
 
 
@@ -84,25 +86,28 @@ def encode_bwt(text:str):
     length=len(text)
     binary_stream=[]
     length_encode=fib_encode(length)
-    binary_stream.append(length_encode)
-    nodes=find_character_freq(text)
-    uniq_chars=len(nodes)
-    uniq_chars_encode=fib_encode(uniq_chars)
-    binary_stream.append(uniq_chars_encode)
+    if length<=1:
+        return length_encode
+    else:
+        binary_stream.append(length_encode)
+        nodes=find_character_freq(text)
+        uniq_chars=len(nodes)
+        uniq_chars_encode=fib_encode(uniq_chars)
+        binary_stream.append(uniq_chars_encode)
 
 
-    char_encodings=[]
-    huffman_encodings=encode_huffman(text)
-    for node in nodes:
-        c=node.char
-        char_encodings.append(format(ord(c),"0b"))
-        encode_length=len(huffman_encodings[ord(c)-36])
-        char_encodings.append(fib_encode(encode_length))
-        char_encodings.append(huffman_encodings[ord(c)-36])
-    binary_stream.append("".join(char_encodings))
-    binary_stream.append(run_length_encoding(text,huffman_encodings))
-    binary_string="".join(binary_stream)
-    output_to_bin(binary_string)
+        char_encodings=[]
+        huffman_encodings=encode_huffman(text)
+        for node in nodes:
+            c=node.char
+            char_encodings.append(format(ord(c),"0b"))
+            encode_length=len(huffman_encodings[ord(c)-36])
+            char_encodings.append(fib_encode(encode_length))
+            char_encodings.append(huffman_encodings[ord(c)-36])
+        binary_stream.append("".join(char_encodings))
+        binary_stream.append(run_length_encoding(text,huffman_encodings))
+        binary_string="".join(binary_stream)
+        return binary_string
 
 def output_to_bin(binary_string):
     with open("encodedBWT.bin","wb") as f:
@@ -111,10 +116,8 @@ def output_to_bin(binary_string):
 
 
 
-# with open("dx.bin","wb") as f:
-#     x=bitarray("10")
-#     y=bitarray("11101011")
-#     x.tofile(f)
-#     y.tofile(f)
+
 if __name__=="__main__":
-    encode_bwt("b$aaaaaaaaaa")
+    bwt=sys.argv[1]
+    bin_string=encode_bwt(bwt)
+    output_to_bin(bin_string)
