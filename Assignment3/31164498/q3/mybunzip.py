@@ -11,4 +11,5 @@ def retrieve_bitstring(bin_file):
 
 if __name__=="__main__":
     bf=sys.argv[1]
-    retrieve_bitstring(bf)
+    x=retrieve_bitstring(bf)
+    print(len(x))

@@ -2,6 +2,9 @@ from heapq import heapify,heappush,heappop
 from bitarray import bitarray
 from fibonaccicodeq3 import fib_encode
 import sys
+import binascii
+
+print(binascii.a2b_uu("a"))
 
 class Node:
     def __init__(self,char,freq) -> None:
@@ -44,14 +47,12 @@ def find_character_freq(text:str):
 
     """
     nodes=[]
-    table=dict()
+    table=[0]*(127-36)
     for char in text:
-        if not table.get(char):
-            table[char]=1
-        else:
-            table[char]+=1
-    for key in table:
-        nodes.append(Node(key,table[key]))
+        table[ord(char)-36]+=1
+    for c in range(len(table)):
+        if table[c]!=0:
+            nodes.append(Node(chr(c+36),table[c]))
     return nodes
 
 
@@ -100,7 +101,7 @@ def encode_bwt(text:str):
         huffman_encodings=encode_huffman(text)
         for node in nodes:
             c=node.char
-            char_encodings.append(format(ord(c),"0b"))
+            char_encodings.append(format(ord(c),"07b"))
             encode_length=len(huffman_encodings[ord(c)-36])
             char_encodings.append(fib_encode(encode_length))
             char_encodings.append(huffman_encodings[ord(c)-36])
