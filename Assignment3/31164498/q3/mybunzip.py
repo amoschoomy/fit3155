@@ -12,30 +12,38 @@ def retrieve_bitstring(bin_file):
     return x
 
 def decode_bit(barray):
-    bit_ptr=0
-    fl=[1,2]
-    bwt_length,bit_ptr=fib_decode(barray,bit_ptr,fl)
-    if bwt_length==1:
+
+    bit_ptr=0 #use a pointer to iterate through bitarray
+    fl=[1,2] #fibonacci list
+
+    bwt_length,bit_ptr=fib_decode(barray,bit_ptr,fl) #decode bwt length and return the new pointer
+
+    if bwt_length==1: #empty string case
         return ""
-    uniq_char,bit_ptr=fib_decode(barray,bit_ptr,fl)
-    tree=HuffmanTree()
+
+    uniq_char,bit_ptr=fib_decode(barray,bit_ptr,fl) #decode uniq char and return the new pointer
+
+    tree=HuffmanTree() #huffman tree to decode huffman encoding
+
     for _ in range(uniq_char):
         asc_chr=""
         for i in range(7):
-            asc_chr+=str(barray[bit_ptr+i])
+            asc_chr+=str(barray[bit_ptr+i]) #ascii decoding of char
         char=chr(int(asc_chr,2))
         bit_ptr+=7
-        code_length,bit_ptr=fib_decode(barray,bit_ptr,fl)
-        tree.add_code(barray,bit_ptr,code_length,char)
+
+        code_length,bit_ptr=fib_decode(barray,bit_ptr,fl) #decode the code length of huffman
+        tree.add_code(barray,bit_ptr,code_length,char) #add the code to tree
         bit_ptr+=code_length
+
     result=[]
 
     total_length=0
-    while total_length<bwt_length:
-        char,bit_ptr=tree.traverse(barray,bit_ptr)
-        run_length,bit_ptr=fib_decode(barray,bit_ptr,fl)
+    while total_length<bwt_length: #decode run length encoding by traversing the tree
+        char,bit_ptr=tree.traverse(barray,bit_ptr) #get that char from tree
+        run_length,bit_ptr=fib_decode(barray,bit_ptr,fl) #get the runlength
         total_length+=run_length
-        for _ in range(run_length):
+        for _ in range(run_length): #append run lengths of char
             result.append(char)
     return "".join(result)
 
