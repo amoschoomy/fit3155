@@ -2,11 +2,10 @@ import sys
 from string import ascii_lowercase
 def generate_all_strings(a:int,length:int):
     """
-    a== how many characters in alphabet
-    length= length of generated string from these alphabets
+    Recursive generate all string
 
     """
-    words=[] #list of words
+    words=[] 
     n=0
     s=""
     aux_gen(a,length,n,s,words)
@@ -21,9 +20,13 @@ def aux_gen(a,length,n,s:str,words):
         new_s=s+ascii_lowercase[i]
         aux_gen(a,length,n+1,new_s,words)
 
-def all_cyclic_no_slice(s:str):
+def cycles(s:str):
+    """
+    Brute force generate cyclic rotations
+    
+    """
     n=len(s)
-    cr=set()
+    cr=set() #hash table for simpler code
     new_s=""
     for i in range(n):
         for k in range(i,n):
@@ -37,14 +40,14 @@ def all_cyclic_no_slice(s:str):
 def solution(all_strings,a,p):
     n_times=0
     for j in all_strings:
-        if len(all_cyclic_no_slice(j))==p:
+        if len(cycles(j))==p: # p distinct cycles
             n_times+=1
-    two=pow(a,p)-a
+    two=pow(a,p)-a # a times of 1 distinct rotation so 2 distinct rotations == pow(a,p)-a
     if two%p:
         boolean="false"
     else:
         boolean="true"
-    print(pow(a,p)-a,n_times,a,boolean)
+    print(two,n_times,a,boolean) 
     
 
 
