@@ -4,7 +4,6 @@ from fibonaccicodeq3 import fib_decode
 from huffman import HuffmanTree
 
 
-#NOTE: Optimise fibonacci encoding to not recompute fibonacci every time
 
 def retrieve_bitstring(bin_file):
     with open(bin_file,"rb") as f:
@@ -16,6 +15,8 @@ def decode_bit(barray):
     bit_ptr=0
     fl=[1,2]
     bwt_length,bit_ptr=fib_decode(barray,bit_ptr,fl)
+    if bwt_length==1:
+        return ""
     uniq_char,bit_ptr=fib_decode(barray,bit_ptr,fl)
     tree=HuffmanTree()
     for _ in range(uniq_char):

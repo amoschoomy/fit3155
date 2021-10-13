@@ -21,6 +21,7 @@ class Node:
 def run_length_encoding(text:str,huffman_encodings:list):
     run_length=1
     encode_string=[]
+    fl=[1,2]
     for i in range(1,len(text)):
         if text[i]==text[i-1]:
             run_length+=1
@@ -56,14 +57,15 @@ def find_character_freq(text:str):
 def encode_bwt(text:str):
     length=len(text)
     binary_stream=[]
-    length_encode=fib_encode(length)
+    fl=[1,2]
+    length_encode=fib_encode(length,fl)
     if length<=1:
         return length_encode
     else:
         binary_stream.append(length_encode)
         nodes=find_character_freq(text)
         uniq_chars=len(nodes)
-        uniq_chars_encode=fib_encode(uniq_chars)
+        uniq_chars_encode=fib_encode(uniq_chars,fl)
         binary_stream.append(uniq_chars_encode)
 
 
@@ -73,7 +75,7 @@ def encode_bwt(text:str):
             c=node.char
             char_encodings.append(format(ord(c),"07b"))
             encode_length=len(huffman_encodings[ord(c)-36])
-            char_encodings.append(fib_encode(encode_length))
+            char_encodings.append(fib_encode(encode_length,fl))
             char_encodings.append(huffman_encodings[ord(c)-36])
         binary_stream.append("".join(char_encodings))
         binary_stream.append(run_length_encoding(text,huffman_encodings))

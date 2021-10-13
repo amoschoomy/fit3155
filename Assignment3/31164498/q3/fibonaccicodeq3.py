@@ -6,8 +6,9 @@ def fibonacci(max_val):
         i+=1
     return fl
 
-def fib_encode(n):
-    fl=fibonacci(n)
+def fib_encode(n,fl):
+    while fl[-1]<=n:
+        fl.append(fl[-1]+fl[-2])
     encoding=["0"]*len(fl)
     encoding[-1]="1"
     encoding[-2]="1"
