@@ -4,10 +4,17 @@ Amos Choo Jia Shern
 31164998
 
 """
+def fibonacci(max_val):
+    fl=[1,2]
+    i=2
+    while fl[-1]<=max_val:
+        fl.append(fl[i-1]+fl[i-2])
+        i+=1
+    return fl
 
 
 
-def fib_encode(n,fl):
+def fib_encode(n,fl=None):
 
     """
     Given n and fibonacci list
@@ -15,9 +22,11 @@ def fib_encode(n,fl):
 
     precomputed fibonacci list is passed into
     """
-
-    while fl[-1]<=n: #not reached the value, keep computing fibonacci number, since list is by reference, it will also update outside
-        fl.append(fl[-1]+fl[-2])
+    if fl is None:
+        fl=fibonacci(n)
+    else:
+        while fl[-1]<=n: #not reached the value, keep computing fibonacci number, since list is by reference, it will also update outside
+            fl.append(fl[-1]+fl[-2])
 
     #Rest of the code similar as q2 fibonacciencode.py
     encoding=["0"]*len(fl)
@@ -31,7 +40,7 @@ def fib_encode(n,fl):
             if curr_max==0:
                 break
             i-=1
-    return "".join(encoding)
+    return "".join(encoding),fl
 
 
 def fib_decode(bits,ptr,fl:list):

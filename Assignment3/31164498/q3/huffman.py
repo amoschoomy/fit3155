@@ -57,12 +57,16 @@ class HuffmanTree():
         current=self.root
         for i in range(ptr,len(bits)):
             if current.char is not None:
-                return current.char,i
+                return current.char,i+1
             else:
                 if bits[i]==1:
                     current=current.right
+                    if current.char is not None:
+                        return current.char,i+1
                 else:
                     current=current.left
+                    if current.char is not None:
+                        return current.char,i+1
 
 
 class Node:
