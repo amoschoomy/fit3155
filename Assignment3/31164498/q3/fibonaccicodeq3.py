@@ -1,4 +1,12 @@
 
+"""
+Amos Choo Jia Shern
+31164998
+
+"""
+
+
+
 def fib_encode(n,fl):
 
     """

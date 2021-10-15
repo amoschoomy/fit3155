@@ -4,6 +4,11 @@ from fibonaccicodeq3 import fib_decode
 from huffman import HuffmanTree
 
 
+"""
+Amos Choo Jia Shern
+31164998
+
+"""
 
 def retrieve_bitstring(bin_file):
     with open(bin_file,"rb") as f:
@@ -56,3 +61,4 @@ if __name__=="__main__":
     x=retrieve_bitstring(bf)
     bwt_string=decode_bit(x)
     write_to_file(bwt_string)
+

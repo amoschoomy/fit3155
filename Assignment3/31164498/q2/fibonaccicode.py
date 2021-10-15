@@ -1,5 +1,12 @@
 import sys
 
+
+"""
+Amos Choo Jia Shern
+31164998
+
+"""
+
 def fib_encode(max_n):
     """
     Given max_n, generate fib code from 1-> max n

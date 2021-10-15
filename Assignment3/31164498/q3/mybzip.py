@@ -4,6 +4,13 @@ import sys
 from huffman import encode_huffman,Node
 
 
+
+"""
+Amos Choo Jia Shern
+31164998
+
+"""
+
 def run_length_encoding(text:str,huffman_encodings:list,fl:list):
     """
     Given huffman encodings list, and text, perform run length encoding

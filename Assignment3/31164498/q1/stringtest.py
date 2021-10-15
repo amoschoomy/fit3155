@@ -1,5 +1,12 @@
 import sys
 from string import ascii_lowercase
+
+"""
+Amos Choo Jia Shern
+31164998
+
+"""
+
 def generate_all_strings(a:int,length:int):
     """
     Recursive generate all string

@@ -1,5 +1,13 @@
 from heapq import heappush,heappop,heapify
 
+
+
+"""
+Amos Choo Jia Shern
+31164998
+
+"""
+
 class HuffmanTree():
     def __init__(self) -> None:
         self.root=Node()
